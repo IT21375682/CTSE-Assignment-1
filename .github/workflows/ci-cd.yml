@@ -14,14 +14,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/docker@v1
-        continue-on-error: false  # Set to true if you don't want it to fail the workflow
+      - name: Snyk Code & Dependency Scan
+        uses: snyk/actions/setup@v1
+        with:
+          version: latest
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: docker.io/${{ secrets.DOCKER_USERNAME }}/myapp:test
-          args: --file=Dockerfile
+
+      - name: Run Snyk test
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
